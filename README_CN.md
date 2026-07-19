@@ -1,3 +1,7 @@
+[English](README.md) | [中文](README_CN.md)
+
+---
+
 # solanaut
 
 Solana 交易人类可读解码器。输入交易签名，输出看得懂的完整交易明细——告别区块浏览器的 base64 盲文。

@@ -1,5 +1,9 @@
 # solanaut
 
+[中文](README_CN.md) | [English](README.md)
+
+---
+
 Human-readable Solana transaction decoder. Paste a transaction signature, see what actually happened — no more squinting at base64 blobs in block explorers.
 
 ```
