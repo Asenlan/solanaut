@@ -1,6 +1,6 @@
 # solanaut
 
-Human-readable Solana transaction decoder. Paste a transaction signature, see what actually happened — no more squinting at base64 blobs in block explorers.
+Solana 交易人类可读解码器。输入交易签名，输出看得懂的完整交易明细——告别区块浏览器的 base64 盲文。
 
 ```
 $ solanaut decode 5nS9NpJ...xK3
@@ -24,102 +24,52 @@ Signer:   7xK2V...sender
   Program:    Jupiter V6 (DEX Aggregator)
   Data (raw):
     discriminator:   5f81e9ab fedc2103
-    hex:             5f81e9ab fedc2103 ...
-                     (264 bytes total)
-
-  #3  transfer
-  Program:    System Program (Native)
-  Data:
-    lamports:       100,000 lamports
+    hex:             ... (264 bytes total)
 ```
 
-## Features
+## 功能
 
-- **Known program database** — 25+ major Solana programs identified by name (Jupiter, Orca, Raydium, Pump.fun, Jito, Metaplex, etc.)
-- **Parsed instruction support** — SPL Token / System program instructions come pre-parsed
-- **Anchor discriminator matching** — maps 8-byte discriminators to instruction names when IDL available
-- **Borsh field decoding** — decodes common Anchor instruction args (u8-u128, bool, Pubkey, String)
-- **JSON output mode** — `--json` flag for piping to `jq` or scripts
-- **Colored terminal output** — addresses, amounts, status clearly differentiated
+- **25+ 已知程序识别** — Jupiter, Orca, Raydium, Pump.fun, Jito, Metaplex, Magic Eden 等
+- **解析指令支持** — SPL Token / System Program 指令被 RPC 节点预解析
+- **Anchor 鉴别器匹配** — 通过 sha256("global:<name>") 前 8 字节匹配指令名
+- **Borsh 字段解码** — 解码常见 Anchor 指令参数（u8-u128, bool, Pubkey, String）
+- **JSON 输出** — `--json` 参数支持管道到 `jq` 或脚本
+- **彩色终端** — 地址、金额、状态分颜色显示
 
-## Installation
+## 安装
 
 ```bash
 cargo install --git https://github.com/user/solanaut
 ```
 
-Or build from source:
+## 使用
 
 ```bash
-git clone https://github.com/user/solanaut
-cd solanaut
-cargo build --release
+solanaut decode <SIGNATURE>          # 解码交易
+solanaut decode <SIGNATURE> --json   # JSON 输出
+solanaut decode <SIGNATURE> --rpc <URL>  # 自定义 RPC
+solanaut programs                    # 列出已知程序
 ```
 
-## Usage
-
-```bash
-# Decode a transaction
-solanaut decode <SIGNATURE>
-
-# JSON output
-solanaut decode <SIGNATURE> --json
-
-# Custom RPC endpoint
-solanaut decode <SIGNATURE> --rpc https://your-rpc.com
-
-# List known programs
-solanaut programs
-```
-
-## Architecture
+## 架构
 
 ```
 src/
-├── main.rs       # CLI entry point (clap)
-├── rpc.rs        # Solana RPC client
-├── decoder.rs    # Core decoding engine
-├── idl.rs        # Anchor IDL types + discriminator
-├── program_db.rs # Known program address → name lookup
-└── display.rs    # Terminal-formatted output
+├── main.rs       # CLI 入口 (clap)
+├── rpc.rs        # Solana RPC 客户端
+├── decoder.rs    # 核心解码引擎
+├── idl.rs        # Anchor IDL 类型 + 鉴别器
+├── program_db.rs # 已知程序地址库
+└── display.rs    # 终端格式化输出
 ```
 
-## Known Programs
+## 技术栈
 
-25+ programs indexed with name and category:
+- **Rust** — 零成本抽象
+- **solana-client / solana-sdk** — 官方 Solana crate (v2)
+- **clap** — 声明式 CLI 参数解析
+- **sha2** — Anchor 指令鉴别器计算
 
-| Category | Programs |
-|----------|----------|
-| Native | System, Vote, Stake, Compute Budget, Address Lookup Table |
-| Token | SPL Token, Token-2022, Associated Token Account |
-| DEX Aggregator | Jupiter V4/V6 |
-| DEX | Orca Whirlpool, Orca Token Swap V2, Raydium AMM V4, Raydium CLMM |
-| Memecoin | Pump.fun |
-| NFT | Metaplex Token Metadata, Magic Eden |
-| Liquid Staking | Marinade Finance, Jito |
-| Lending | Solend, Kamino |
-| Perpetuals | Drift Protocol |
-| Bridge | Wormhole, Wormhole Token Bridge |
-| Utility | SPL Memo, SPL Name Service |
-
-## Tech Stack
-
-- **Rust** — zero-cost abstractions, great for CLI tools
-- **solana-client / solana-sdk** — official Solana crates (v2)
-- **clap** — declarative CLI argument parsing
-- **colored** — terminal color support
-- **sha2** — Anchor discriminator computation
-- **tokio** — async runtime for RPC calls
-
-## Roadmap
-
-- [ ] IDL registry: `solanaut idl add <program-id> <idl.json>`
-- [ ] On-chain IDL fetching from Anchor programs
-- [ ] Token amount formatting with decimals
-- [ ] Block explorer URL generation
-- [ ] `solanaut watch` — stream transactions in real-time
-- [ ] Transaction simulation mode
-
-## License
+## 许可
 
 MIT
